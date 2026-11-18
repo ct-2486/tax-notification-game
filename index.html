@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>稅籍異動即時通－守護房產大作戰</title>
+  <style>
+    :root {
+      --sky-blue: #87CEEB;
+      --light-green: #98D8C8;
+      --cream: #FFF8E7;
+      --orange: #FFB347;
+      --soft-orange: #FFDAB9;
+      --deep-blue: #4A90A4;
+      --success-green: #4CAF50;
+      --warm-red: #E57373;
+      --text-dark: #2C3E50;
+      --white: #FFFFFF;
+      --shadow: 0 4px 15px rgba(0,0,0,0.1);
+      --radius: 16px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(180deg, #E0F7FA 0%, #B2EBF2 40%, #E8F5E9 100%);
+      min-height: 100vh;
+      color: var(--text-dark);
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 16px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header / Progress */
+    .game-header {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+      display: none;
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .score-display {
+      color: var(--deep-blue);
+      font-size: 18px;
+    }
+
+    .progress-bar-bg {
+      height: 12px;
+      background: #E0E0E0;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--light-green), var(--sky-blue));
+      border-radius: 6px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    /* Screens */
+    .screen {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Home Screen */
+    .home-card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 28px 20px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .house-character {
+      font-size: 72px;
+      margin-bottom: 8px;
+      animation: bounce 2s infinite;
+      display: inline-block;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .shield-icon {
+      font-size: 28px;
+      vertical-align: middle;
+    }
+
+    h1.main-title {
+      font-size: 28px;
+      color: var(--deep-blue);
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    h2.sub-title {
+      font-size: 22px;
+      color: var(--orange);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .slogan {
+      font-size: 15px;
+      color: #555;
+      margin-bottom: 24px;
+      padding: 0 8px;
+      line-height: 1.6;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 16px 20px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 50px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+    }
+
+    .btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4FC3F7, #29B6F6);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #29B6F6, #0288D1);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #81C784, #66BB6A);
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: linear-gradient(135deg, #66BB6A, #43A047);
+    }
+
+    .btn-outline {
+      background: white;
+      color: var(--deep-blue);
+      border: 2px solid var(--deep-blue);
+      box-shadow: none;
+    }
+
+    .btn-outline:hover {
+      background: #E3F2FD;
+    }
+
+    .btn-next {
+      background: linear-gradient(135deg, var(--orange), #FF9800);
+      color: white;
+      margin-top: 16px;
+      display: none;
+    }
+
+    .btn-next.show {
+      display: block;
+    }
+
+    /* Modal / Info */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-box {
+      background: white;
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 420px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-box h3 {
+      font-size: 22px;
+      color: var(--deep-blue);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .modal-box p, .modal-box li {
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+
+    .modal-box ul {
+      padding-left: 20px;
+      margin-bottom: 16px;
+    }
+
+    .close-btn {
+      background: var(--deep-blue);
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-size: 16px;
+      cursor: pointer;
+      display: block;
+      margin: 16px auto 0;
+      font-family: inherit;
+    }
+
+    /* Question Screen */
+    .question-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 24px 18px;
+      box-shadow: var(--shadow);
+      flex: 1;
+    }
+
+    .question-number {
+      font-size: 15px;
+      color: var(--deep-blue);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .question-text {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      color: var(--text-dark);
+    }
+
+    .options-list {
+      list-style: none;
+    }
+
+    .option-item {
+      background: #F5F9FC;
+      border: 2px solid #D0E4F0;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      font-size: 17px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      min-height: 56px;
+    }
+
+    .option-item:hover:not(.disabled) {
+      background: #E3F2FD;
+      border-color: #90CAF9;
+    }
+
+    .option-item.selected {
+      background: #BBDEFB;
+      border-color: #42A5F5;
+    }
+
+    .option-item.correct {
+      background: #C8E6C9;
+      border-color: var(--success-green);
+    }
+
+    .option-item.wrong {
+      background: #FFCDD2;
+      border-color: var(--warm-red);
+    }
+
+    .option-item.disabled {
+      pointer-events: none;
+      opacity: 0.85;
+    }
+
+    .option-letter {
+      font-weight: 700;
+      color: var(--deep-blue);
+      min-width: 24px;
+    }
+
+    /* Multi-select note */
+    .multi-hint {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 12px;
+      background: #FFF3E0;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+
+    /* Feedback */
+    .feedback-area {
+      display: none;
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 14px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .feedback-area.show {
+      display: block;
+    }
+
+    .feedback-area.correct {
+      background: #E8F5E9;
+      border: 2px solid #A5D6A7;
+    }
+
+    .feedback-area.wrong {
+      background: #FFF3E0;
+      border: 2px solid #FFCC80;
+    }
+
+    .feedback-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feedback-title.correct {
+      color: var(--success-green);
+    }
+
+    .feedback-title.wrong {
+      color: #EF6C00;
+    }
+
+    .feedback-score {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--deep-blue);
+    }
+
+    .feedback-explain {
+      font-size: 15px;
+      line-height: 1.65;
+      color: #444;
+    }
+
+    /* Result Screen */
+    .result-card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 28px 20px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .result-emoji {
+      font-size: 64px;
+      margin-bottom: 8px;
+      animation: bounce 1.5s infinite;
+    }
+
+    .result-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--deep-blue);
+      margin-bottom: 8px;
+    }
+
+    .result-rank {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--orange);
+      margin-bottom: 12px;
+    }
+
+    .result-message {
+      font-size: 15px;
+      color: #555;
+      margin-bottom: 20px;
+      line-height: 1.6;
+      padding: 0 8px;
+    }
+
+    .result-stats {
+      background: #F5F9FC;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--deep-blue);
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .info-section {
+      background: linear-gradient(135deg, #E3F2FD, #E8F5E9);
+      border-radius: 16px;
+      padding: 20px 16px;
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .info-section h3 {
+      font-size: 18px;
+      color: var(--deep-blue);
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .info-section p {
+      font-size: 14px;
+      line-height: 1.65;
+      margin-bottom: 10px;
+    }
+
+    .info-section ul {
+      padding-left: 18px;
+      margin-bottom: 12px;
+    }
+
+    .info-section li {
+      font-size: 14px;
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    .info-section a {
+      color: #1565C0;
+      text-decoration: underline;
+      word-break: break-all;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    /* Footer note */
+    .footer-note {
+      text-align: center;
+      font-size: 12px;
+      color: #888;
+      margin-top: 16px;
+      padding-bottom: 8px;
+    }
+
+    /* Responsive */
+    @media (min-width: 480px) {
+      h1.main-title { font-size: 32px; }
+      h2.sub-title { font-size: 24px; }
+      .question-text { font-size: 22px; }
+      .option-item { font-size: 18px; padding: 16px; }
+      .house-character { font-size: 88px; }
+    }
+
+    @media (max-width: 360px) {
+      .question-text { font-size: 18px; }
+      .option-item { font-size: 15px; padding: 12px; }
+      .btn { font-size: 16px; padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Progress Header (shown during game) -->
+    <div class="game-header" id="gameHeader">
+      <div class="progress-info">
+        <span id="levelText">第 1 關／共 5 關</span>
+        <span class="score-display">得分：<span id="currentScore">0</span></span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressBar"></div>
+      </div>
+    </div>
+
+    <!-- HOME SCREEN -->
+    <div class="screen active" id="homeScreen">
+      <div class="home-card">
+        <div class="house-character">🏠🛡️📱</div>
+        <h1 class="main-title">稅籍異動即時通</h1>
+        <h2 class="sub-title">守護房產大作戰</h2>
+        <p class="slogan">即時掌握稅籍異動，守護自己的房產權益！</p>
+        
+        <button class="btn btn-primary" onclick="startGame()">▶ 開始遊戲</button>
+        <button class="btn btn-secondary" onclick="showHowTo()">📖 遊戲玩法</button>
+        <button class="btn btn-outline" onclick="showKnowledge()">💡 服務小知識</button>
+      </div>
+      <p class="footer-note">臺北市稅捐稽徵處為民服務宣導｜純教育用途</p>
+    </div>
+
+    <!-- QUESTION SCREEN -->
+    <div class="screen" id="questionScreen">
+      <div class="question-card">
+        <div class="question-number" id="qNumber">第一關：認識服務功能</div>
+        <div class="question-text" id="qText"></div>
+        <div class="multi-hint" id="multiHint" style="display:none;">※ 本題為複選題，請選出所有正確選項後再按「確認答案」</div>
+        <ul class="options-list" id="optionsList"></ul>
+        
+        <button class="btn btn-primary" id="confirmBtn" style="display:none; margin-top:12px;" onclick="confirmMultiAnswer()">確認答案</button>
+        
+        <div class="feedback-area" id="feedbackArea">
+          <div class="feedback-title" id="feedbackTitle"></div>
+          <div class="feedback-score" id="feedbackScore"></div>
+          <div class="feedback-explain" id="feedbackExplain"></div>
+        </div>
+        
+        <button class="btn btn-next" id="nextBtn" onclick="nextQuestion()">下一題 →</button>
+      </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div class="screen" id="resultScreen">
+      <div class="result-card">
+        <div class="result-emoji" id="resultEmoji">🎉</div>
+        <h2 class="result-title">恭喜完成守護房產大作戰！</h2>
+        <div class="result-rank" id="resultRank"></div>
+        <p class="result-message" id="resultMessage"></p>
+        
+        <div class="result-stats">
+          <div class="stat-item">
+            <div class="stat-value" id="finalScore">0</div>
+            <div class="stat-label">總分</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="correctCount">0</div>
+            <div class="stat-label">答對題數</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="wrongCount">0</div>
+            <div class="stat-label">答錯題數</div>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="restartGame()">🔄 重新挑戰</button>
+          <button class="btn btn-outline" onclick="goHome()">🏠 返回首頁</button>
+        </div>
+
+        <!-- Service Info Section -->
+        <div class="info-section">
+          <h3>守護房產，多一分安心！</h3>
+          <p>稅籍異動即時通是一項便民通知服務，協助民眾在名下不動產發生相關稅務申報案件時，及早掌握異動資訊。</p>
+          <ul>
+            <li><strong>服務目的：</strong>掌握不動產相關稅籍異動資訊。</li>
+            <li><strong>通知內容：</strong>土地增值稅及契稅申報案件。</li>
+            <li><strong>通知方式：</strong>手機簡訊、電子郵件及符合條件的官方LINE帳號推播。</li>
+            <li><strong>申請方式：</strong>臨櫃或網路申請。</li>
+            <li><strong>重要提醒：</strong>本服務屬通知服務，並非不動產交易阻止或防止詐騙的保證機制。</li>
+          </ul>
+          <p style="margin-top:12px;">
+            <strong>官方資訊：</strong><br>
+            臺北市稅捐稽徵處服務頁面：<br>
+            <a href="https://tpctax.gov.taipei/cp.aspx?Create=1&ccms_cs=1&n=3751069E7801B73E&s=55C50D260B8ED960&state=F5D336F102ACBC68" target="_blank" rel="noopener">點此前往官方服務說明</a><br><br>
+            地方稅網路申報作業（線上申請）：<br>
+            <a href="https://net.tax.nat.gov.tw" target="_blank" rel="noopener">https://net.tax.nat.gov.tw</a>
+          </p>
+        </div>
+      </div>
+      <p class="footer-note">本遊戲純為教育宣導用途，不蒐集任何個人資料</p>
+    </div>
+  </div>
+
+  <!-- How to Play Modal -->
+  <div class="modal-overlay" id="howToModal">
+    <div class="modal-box">
+      <h3>📖 遊戲玩法</h3>
+      <p>本遊戲共有 <strong>5 道題目</strong>，每答對一題即可獲得 <strong>20 分</strong>，完成所有題目後，就能知道自己的稅務知識有多厲害！</p>
+      <ul>
+        <li>每題只能選擇一次答案。</li>
+        <li>答對得 20 分，答錯得 0 分。</li>
+        <li>看完解說後再進入下一題。</li>
+        <li>滿分 100 分，挑戰成為房產守護達人！</li>
+      </ul>
+      <button class="close-btn" onclick="closeModal('howToModal')">我知道了</button>
+    </div>
+  </div>
+
+  <!-- Knowledge Modal -->
+  <div class="modal-overlay" id="knowledgeModal">
+    <div class="modal-box">
+      <h3>💡 服務小知識</h3>
+      <p><strong>稅籍異動即時通</strong>是臺北市稅捐稽徵處推出的便民通知服務（已擴大至全國多數縣市）。</p>
+      <ul>
+        <li>當名下不動產發生<strong>土地增值稅或契稅</strong>申報時，系統會通知您。</li>
+        <li>通知管道：手機簡訊、電子郵件、官方 LINE 推播。</li>
+        <li>申請後需完成電子郵件驗證才正式生效（7 天內）。</li>
+        <li>可臨櫃或透過「地方稅網路申報作業」線上申請。</li>
+        <li>本服務是<strong>通知提醒</strong>，並不能直接阻止不動產移轉。</li>
+      </ul>
+      <p>透過這個遊戲，快速認識這項守護房產的好工具吧！</p>
+      <button class="close-btn" onclick="closeModal('knowledgeModal')">關閉</button>
+    </div>
+  </div>
+
+  <script>
+    // ===== Game Data =====
+    const questions = [
+      {
+        level: "第一關：認識服務功能",
+        text: "「稅籍異動即時通」的通知訊息具有法律效力，可以直接阻止不動產移轉。",
+        options: [
+          { key: "A", text: "是" },
+          { key: "B", text: "否" }
+        ],
+        correct: ["B"],
+        multi: false,
+        correctExplain: "答對了！稅籍異動即時通主要是提供稅籍異動通知，協助民眾及早掌握不動產相關申報資訊，並非具有法律效力的阻止交易措施。",
+        wrongExplain: "別擔心！這項服務的主要功能是通知及提醒，協助民眾及早掌握相關資訊，並不能直接阻止不動產移轉。"
+      },
+      {
+        level: "第二關：完成申請驗證",
+        text: "申請「稅籍異動即時通」後，不需要完成電子郵件驗證，服務就會正式生效。",
+        options: [
+          { key: "A", text: "是" },
+          { key: "B", text: "否" }
+        ],
+        correct: ["B"],
+        multi: false,
+        correctExplain: "正確！依服務申請流程，申請人須於7天內至電子信箱點選驗證信，驗證成功才完成申請；逾期或驗證失敗須重新申請。",
+        wrongExplain: "申請服務後，別忘了查看電子信箱並完成驗證，依服務申請流程，須於7天內完成電子郵件驗證，才算完成申請。"
+      },
+      {
+        level: "第三關：認識通知內容",
+        text: "申請服務生效後，名下不動產發生哪一類稅務申報案件時，系統會依設定方式通知？",
+        options: [
+          { key: "A", text: "土地增值稅及契稅申報案件" },
+          { key: "B", text: "房屋稅及地價稅繳納案件" },
+          { key: "C", text: "綜合所得稅及營業稅申報案件" },
+          { key: "D", text: "使用牌照稅及娛樂稅申報案件" }
+        ],
+        correct: ["A"],
+        multi: false,
+        correctExplain: "答對了！當名下不動產發生土地增值稅或契稅申報案件時，系統會依申請人的通知設定發送訊息，協助民眾掌握相關異動資訊。",
+        wrongExplain: "正確答案是土地增值稅及契稅申報案件。這兩種稅目與土地、房屋移轉有關，是本服務的重要通知內容。"
+      },
+      {
+        level: "第四關：認識通知管道",
+        text: "申請「稅籍異動即時通」時，可選擇哪些通知方式？請選出所有正確選項。",
+        options: [
+          { key: "A", text: "手機簡訊通知" },
+          { key: "B", text: "電子郵件通知" },
+          { key: "C", text: "財政部地方稅網路申報作業官方LINE帳號推播" },
+          { key: "D", text: "一般社群網站私訊通知" }
+        ],
+        correct: ["A", "B", "C"],
+        multi: true,
+        correctExplain: "太棒了！手機簡訊、電子郵件及符合申請條件的官方LINE帳號推播，都是本服務提供的通知方式。",
+        wrongExplain: "本服務的通知方式包括手機簡訊、電子郵件，以及符合條件的官方LINE帳號推播；一般社群網站私訊並非正式通知管道。"
+      },
+      {
+        level: "第五關：如何申請服務",
+        text: "民眾可以透過哪一種方式申請「稅籍異動即時通」？",
+        options: [
+          { key: "A", text: "只能親自到稅捐機關臨櫃申請" },
+          { key: "B", text: "只能透過電話向稅捐機關申請" },
+          { key: "C", text: "可臨櫃申請，也可透過地方稅網路申報作業線上申請" },
+          { key: "D", text: "只能透過一般電子郵件寄送申請資料" }
+        ],
+        correct: ["C"],
+        multi: false,
+        correctExplain: "恭喜答對！民眾可以選擇臨櫃辦理，也可以透過地方稅網路申報作業線上申請，依照自己的需求選擇方便的方式。",
+        wrongExplain: "別擔心！除了臨櫃申請外，民眾也可以透過地方稅網路申報作業線上申請，讓申辦更方便。"
+      }
+    ];
+
+    // ===== Game State =====
+    let currentQ = 0;
+    let score = 0;
+    let answered = false;
+    let selectedMulti = [];
+    let correctCount = 0;
+
+    // ===== Functions =====
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function startGame() {
+      currentQ = 0;
+      score = 0;
+      correctCount = 0;
+      answered = false;
+      selectedMulti = [];
+      document.getElementById('gameHeader').style.display = 'block';
+      updateProgress();
+      loadQuestion();
+      showScreen('questionScreen');
+    }
+
+    function updateProgress() {
+      document.getElementById('levelText').textContent = `第 ${currentQ + 1} 關／共 5 關`;
+      document.getElementById('currentScore').textContent = score;
+      const pct = (currentQ / 5) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+    }
+
+    function loadQuestion() {
+      answered = false;
+      selectedMulti = [];
+      const q = questions[currentQ];
+      
+      document.getElementById('qNumber').textContent = q.level;
+      document.getElementById('qText').textContent = q.text;
+      
+      const multiHint = document.getElementById('multiHint');
+      const confirmBtn = document.getElementById('confirmBtn');
+      if (q.multi) {
+        multiHint.style.display = 'block';
+        confirmBtn.style.display = 'block';
+        confirmBtn.disabled = true;
+        confirmBtn.style.opacity = '0.5';
+      } else {
+        multiHint.style.display = 'none';
+        confirmBtn.style.display = 'none';
+      }
+
+      const list = document.getElementById('optionsList');
+      list.innerHTML = '';
+      
+      q.options.forEach(opt => {
+        const li = document.createElement('li');
+        li.className = 'option-item';
+        li.innerHTML = `<span class="option-letter">${opt.key}.</span><span>${opt.text}</span>`;
+        li.dataset.key = opt.key;
+        
+        if (q.multi) {
+          li.onclick = () => toggleMulti(li, opt.key);
+        } else {
+          li.onclick = () => selectSingle(li, opt.key);
+        }
+        list.appendChild(li);
+      });
+
+      // Reset feedback
+      document.getElementById('feedbackArea').classList.remove('show', 'correct', 'wrong');
+      document.getElementById('nextBtn').classList.remove('show');
+      updateProgress();
+    }
+
+    function toggleMulti(li, key) {
+      if (answered) return;
+      const idx = selectedMulti.indexOf(key);
+      if (idx > -1) {
+        selectedMulti.splice(idx, 1);
+        li.classList.remove('selected');
+      } else {
+        selectedMulti.push(key);
+        li.classList.add('selected');
+      }
+      // Enable confirm if at least one selected
+      const confirmBtn = document.getElementById('confirmBtn');
+      if (selectedMulti.length > 0) {
+        confirmBtn.disabled = false;
+        confirmBtn.style.opacity = '1';
+      } else {
+        confirmBtn.disabled = true;
+        confirmBtn.style.opacity = '0.5';
+      }
+    }
+
+    function confirmMultiAnswer() {
+      if (answered || selectedMulti.length === 0) return;
+      checkAnswer(selectedMulti);
+    }
+
+    function selectSingle(li, key) {
+      if (answered) return;
+      checkAnswer([key]);
+    }
+
+    function checkAnswer(userAnswers) {
+      if (answered) return;
+      answered = true;
+
+      const q = questions[currentQ];
+      const isCorrect = arraysEqual(userAnswers.sort(), q.correct.slice().sort());
+
+      // Disable all options
+      document.querySelectorAll('.option-item').forEach(item => {
+        item.classList.add('disabled');
+        const key = item.dataset.key;
+        if (q.correct.includes(key)) {
+          item.classList.add('correct');
+        } else if (userAnswers.includes(key) && !q.correct.includes(key)) {
+          item.classList.add('wrong');
+        }
+      });
+
+      // Hide confirm for multi
+      document.getElementById('confirmBtn').style.display = 'none';
+
+      // Feedback
+      const feedback = document.getElementById('feedbackArea');
+      const title = document.getElementById('feedbackTitle');
+      const scoreEl = document.getElementById('feedbackScore');
+      const explain = document.getElementById('feedbackExplain');
+
+      if (isCorrect) {
+        score += 20;
+        correctCount++;
+        feedback.classList.add('correct');
+        title.className = 'feedback-title correct';
+        title.innerHTML = '🌟 太棒了！答對囉！';
+        scoreEl.textContent = '獲得 20 分！';
+        explain.textContent = q.correctExplain;
+      } else {
+        feedback.classList.add('wrong');
+        title.className = 'feedback-title wrong';
+        title.innerHTML = '💪 再接再厲！學會正確觀念更重要！';
+        scoreEl.textContent = '本題得 0 分';
+        explain.textContent = q.wrongExplain;
+      }
+
+      feedback.classList.add('show');
+      document.getElementById('currentScore').textContent = score;
+      document.getElementById('nextBtn').classList.add('show');
+
+      // Update progress bar to reflect completion of this question
+      const pct = ((currentQ + 1) / 5) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+    }
+
+    function arraysEqual(a, b) {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+      }
+      return true;
+    }
+
+    function nextQuestion() {
+      currentQ++;
+      if (currentQ >= questions.length) {
+        showResult();
+      } else {
+        loadQuestion();
+      }
+    }
+
+    function showResult() {
+      document.getElementById('gameHeader').style.display = 'none';
+      
+      const finalScore = score;
+      const wrong = 5 - correctCount;
+      
+      document.getElementById('finalScore').textContent = finalScore;
+      document.getElementById('correctCount').textContent = correctCount;
+      document.getElementById('wrongCount').textContent = wrong;
+
+      let rank, message, emoji;
+      if (finalScore === 100) {
+        rank = '房產守護達人！';
+        message = '太厲害了！你已經充分認識稅籍異動即時通的服務觀念，是守護房產的小達人！';
+        emoji = '🏆🏠';
+      } else if (finalScore >= 80) {
+        rank = '房產守護高手！';
+        message = '表現非常棒！你已經掌握大部分的服務知識，再多了解一些就更完整囉！';
+        emoji = '🌟🏠';
+      } else if (finalScore >= 60) {
+        rank = '房產守護學習家！';
+        message = '恭喜完成挑戰！繼續認識稅籍異動即時通，讓自己更了解相關服務！';
+        emoji = '📚🏠';
+      } else {
+        rank = '房產守護新手！';
+        message = '謝謝你的參與！別氣餒，再玩一次就能學到更多稅務知識！';
+        emoji = '💪🏠';
+      }
+
+      document.getElementById('resultRank').textContent = rank;
+      document.getElementById('resultMessage').textContent = message;
+      document.getElementById('resultEmoji').textContent = emoji;
+
+      showScreen('resultScreen');
+    }
+
+    function restartGame() {
+      startGame();
+    }
+
+    function goHome() {
+      document.getElementById('gameHeader').style.display = 'none';
+      showScreen('homeScreen');
+    }
+
+    function showHowTo() {
+      document.getElementById('howToModal').classList.add('show');
+    }
+
+    function showKnowledge() {
+      document.getElementById('knowledgeModal').classList.add('show');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('show');
+    }
+
+    // Close modal on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+      modal.addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.classList.remove('show');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
