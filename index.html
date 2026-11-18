@@ -30,8 +30,10 @@
     @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
     h1.main-title { font-size: 26px; color: var(--deep-blue); margin-bottom: 4px; font-weight: 700; line-height: 1.3; }
     h2.sub-title { font-size: 22px; color: var(--orange); margin-bottom: 12px; font-weight: 600; }
-    .slogan { font-size: 15px; color: #555; margin-bottom: 20px; padding: 0 8px; line-height: 1.6; }
-    .dual-badge { display: inline-block; background: linear-gradient(135deg, #E3F2FD, #E8F5E9); border-radius: 20px; padding: 6px 14px; font-size: 13px; color: var(--deep-blue); font-weight: 600; margin-bottom: 16px; }
+    .slogan { font-size: 15px; color: #555; margin-bottom: 12px; padding: 0 8px; line-height: 1.6; }
+    .dual-badge { display: inline-block; background: linear-gradient(135deg, #E3F2FD, #E8F5E9); border-radius: 20px; padding: 6px 14px; font-size: 13px; color: var(--deep-blue); font-weight: 600; margin-bottom: 12px; }
+    .org-names { font-size: 14px; color: #4A6FA5; font-weight: 600; margin-bottom: 18px; letter-spacing: 0.5px; }
+    .org-sep { color: #90A4AE; margin: 0 4px; }
     .btn { display: block; width: 100%; padding: 16px 20px; margin: 10px 0; border: none; border-radius: 50px; font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-family: inherit; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
     .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.1); }
     .btn-primary { background: linear-gradient(135deg, #4FC3F7, #29B6F6); color: white; }
@@ -108,11 +110,16 @@
         <h2 class="sub-title">守護房產大作戰</h2>
         <div class="dual-badge">雙重守護・雙倍安心</div>
         <p class="slogan">即時掌握稅籍與地籍異動，雙重守護自己的房產權益！</p>
+        <div class="org-names">
+          <span>臺北市稅捐稽徵處</span>
+          <span class="org-sep">｜</span>
+          <span>松山地政事務所</span>
+        </div>
         <button class="btn btn-primary" onclick="startGame()">▶ 開始遊戲</button>
         <button class="btn btn-secondary" onclick="showHowTo()">📖 遊戲玩法</button>
         <button class="btn btn-outline" onclick="showKnowledge()">💡 雙重服務小知識</button>
       </div>
-      <p class="footer-note">稅籍＋地籍異動即時通雙重守護宣導｜純教育用途</p>
+      <p class="footer-note">臺北市稅捐稽徵處 × 松山地政事務所｜稅籍＋地籍異動即時通宣導</p>
     </div>
 
     <div class="screen" id="questionScreen">
@@ -170,7 +177,7 @@
           </p>
         </div>
       </div>
-      <p class="footer-note">本遊戲純為教育宣導用途（稅籍＋地籍異動即時通），不蒐集任何個人資料</p>
+      <p class="footer-note">臺北市稅捐稽徵處 × 松山地政事務所｜純教育宣導用途，不蒐集個人資料</p>
     </div>
   </div>
 
