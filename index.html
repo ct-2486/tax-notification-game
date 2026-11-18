@@ -45,7 +45,6 @@
       flex-direction: column;
     }
 
-    /* Header / Progress */
     .game-header {
       background: var(--white);
       border-radius: var(--radius);
@@ -84,7 +83,6 @@
       width: 0%;
     }
 
-    /* Screens */
     .screen {
       display: none;
       flex: 1;
@@ -101,7 +99,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Home Screen */
     .home-card {
       background: var(--white);
       border-radius: 24px;
@@ -124,11 +121,6 @@
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-8px); }
-    }
-
-    .shield-icon {
-      font-size: 28px;
-      vertical-align: middle;
     }
 
     h1.main-title {
@@ -213,7 +205,6 @@
       display: block;
     }
 
-    /* Modal / Info */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -275,7 +266,6 @@
       font-family: inherit;
     }
 
-    /* Question Screen */
     .question-card {
       background: var(--white);
       border-radius: 20px;
@@ -349,7 +339,6 @@
       min-width: 24px;
     }
 
-    /* Multi-select note */
     .multi-hint {
       font-size: 14px;
       color: #666;
@@ -359,7 +348,6 @@
       border-radius: 8px;
     }
 
-    /* Feedback */
     .feedback-area {
       display: none;
       margin-top: 16px;
@@ -412,7 +400,6 @@
       color: #444;
     }
 
-    /* Result Screen */
     .result-card {
       background: var(--white);
       border-radius: 24px;
@@ -520,7 +507,6 @@
       margin-top: 16px;
     }
 
-    /* Footer note */
     .footer-note {
       text-align: center;
       font-size: 12px;
@@ -529,7 +515,6 @@
       padding-bottom: 8px;
     }
 
-    /* Responsive */
     @media (min-width: 480px) {
       h1.main-title { font-size: 32px; }
       h2.sub-title { font-size: 24px; }
@@ -547,7 +532,6 @@
 </head>
 <body>
   <div class="container">
-    <!-- Progress Header (shown during game) -->
     <div class="game-header" id="gameHeader">
       <div class="progress-info">
         <span id="levelText">第 1 關／共 5 關</span>
@@ -558,22 +542,20 @@
       </div>
     </div>
 
-    <!-- HOME SCREEN -->
     <div class="screen active" id="homeScreen">
       <div class="home-card">
         <div class="house-character">🏠🛡️📱</div>
         <h1 class="main-title">稅籍異動即時通</h1>
         <h2 class="sub-title">守護房產大作戰</h2>
-        <p class="slogan">即時掌握稅籍異動，守護自己的房產權益！</p>
+        <p class="slogan">即時掌握稅籍與地籍異動，雙重守護自己的房產權益！</p>
         
         <button class="btn btn-primary" onclick="startGame()">▶ 開始遊戲</button>
         <button class="btn btn-secondary" onclick="showHowTo()">📖 遊戲玩法</button>
         <button class="btn btn-outline" onclick="showKnowledge()">💡 服務小知識</button>
       </div>
-      <p class="footer-note">臺北市稅捐稽徵處為民服務宣導｜純教育用途</p>
+      <p class="footer-note">稅籍＋地籍異動即時通雙重守護宣導｜純教育用途</p>
     </div>
 
-    <!-- QUESTION SCREEN -->
     <div class="screen" id="questionScreen">
       <div class="question-card">
         <div class="question-number" id="qNumber">第一關：認識服務功能</div>
@@ -593,7 +575,6 @@
       </div>
     </div>
 
-    <!-- RESULT SCREEN -->
     <div class="screen" id="resultScreen">
       <div class="result-card">
         <div class="result-emoji" id="resultEmoji">🎉</div>
@@ -621,31 +602,40 @@
           <button class="btn btn-outline" onclick="goHome()">🏠 返回首頁</button>
         </div>
 
-        <!-- Service Info Section -->
         <div class="info-section">
           <h3>守護房產，多一分安心！</h3>
-          <p>稅籍異動即時通是一項便民通知服務，協助民眾在名下不動產發生相關稅務申報案件時，及早掌握異動資訊。</p>
+          <p><strong>建議同時申請「稅籍異動即時通」與「地籍異動即時通」，雙重守護更完整。</strong></p>
+          
+          <p style="margin-top:12px;"><strong>① 稅籍異動即時通</strong></p>
           <ul>
-            <li><strong>服務目的：</strong>掌握不動產相關稅籍異動資訊。</li>
-            <li><strong>通知內容：</strong>土地增值稅及契稅申報案件。</li>
-            <li><strong>通知方式：</strong>手機簡訊、電子郵件及符合條件的官方LINE帳號推播。</li>
-            <li><strong>申請方式：</strong>臨櫃或網路申請。</li>
-            <li><strong>重要提醒：</strong>本服務屬通知服務，並非不動產交易阻止或防止詐騙的保證機制。</li>
+            <li><strong>通知時機：</strong>名下不動產發生土地增值稅或契稅申報案件時。</li>
+            <li><strong>通知方式：</strong>手機簡訊、電子郵件、官方LINE推播。</li>
+            <li><strong>申請方式：</strong>臨櫃或透過地方稅網路申報作業線上申請（需完成Email驗證）。</li>
           </ul>
-          <p style="margin-top:12px;">
-            <strong>官方資訊：</strong><br>
-            臺北市稅捐稽徵處服務頁面：<br>
-            <a href="https://tpctax.gov.taipei/cp.aspx?Create=1&ccms_cs=1&n=3751069E7801B73E&s=55C50D260B8ED960&state=F5D336F102ACBC68" target="_blank" rel="noopener">點此前往官方服務說明</a><br><br>
-            地方稅網路申報作業（線上申請）：<br>
-            <a href="https://net.tax.nat.gov.tw" target="_blank" rel="noopener">https://net.tax.nat.gov.tw</a>
+          
+          <p style="margin-top:12px;"><strong>② 地籍異動即時通</strong></p>
+          <ul>
+            <li><strong>通知時機：</strong>名下不動產發生買賣、贈與、抵押權設定、查封、書狀補給等重要登記案件時（收件與異動完成各通知一次）。</li>
+            <li><strong>通知方式：</strong>手機簡訊或電子郵件。</li>
+            <li><strong>申請方式：</strong>臨櫃至任一地政事務所，或透過內政部數位櫃臺線上申請。</li>
+          </ul>
+          
+          <p style="margin-top:10px; font-size:13px; color:#555;">※ 兩項服務皆為免費通知提醒，並非阻止交易或防詐騙的保證機制，請及早掌握資訊並依法主張權益。</p>
+          
+          <p style="margin-top:14px;">
+            <strong>官方申請與說明連結：</strong><br>
+            稅籍異動即時通（臺北市稅捐稽徵處）：<br>
+            <a href="https://tpctax.gov.taipei/cp.aspx?Create=1&ccms_cs=1&n=3751069E7801B73E&s=55C50D260B8ED960&state=F5D336F102ACBC68" target="_blank" rel="noopener">官方服務說明</a><br>
+            線上申請：<a href="https://net.tax.nat.gov.tw" target="_blank" rel="noopener">地方稅網路申報作業</a><br><br>
+            地籍異動即時通（內政部地政司）：<br>
+            線上申請：<a href="https://dcland.moi.gov.tw/" target="_blank" rel="noopener">內政部數位櫃臺 https://dcland.moi.gov.tw/</a>
           </p>
         </div>
       </div>
-      <p class="footer-note">本遊戲純為教育宣導用途，不蒐集任何個人資料</p>
+      <p class="footer-note">本遊戲純為教育宣導用途（稅籍＋地籍異動即時通），不蒐集任何個人資料</p>
     </div>
   </div>
 
-  <!-- How to Play Modal -->
   <div class="modal-overlay" id="howToModal">
     <div class="modal-box">
       <h3>📖 遊戲玩法</h3>
@@ -660,25 +650,21 @@
     </div>
   </div>
 
-  <!-- Knowledge Modal -->
   <div class="modal-overlay" id="knowledgeModal">
     <div class="modal-box">
       <h3>💡 服務小知識</h3>
-      <p><strong>稅籍異動即時通</strong>是臺北市稅捐稽徵處推出的便民通知服務（已擴大至全國多數縣市）。</p>
-      <ul>
-        <li>當名下不動產發生<strong>土地增值稅或契稅</strong>申報時，系統會通知您。</li>
-        <li>通知管道：手機簡訊、電子郵件、官方 LINE 推播。</li>
-        <li>申請後需完成電子郵件驗證才正式生效（7 天內）。</li>
-        <li>可臨櫃或透過「地方稅網路申報作業」線上申請。</li>
-        <li>本服務是<strong>通知提醒</strong>，並不能直接阻止不動產移轉。</li>
-      </ul>
-      <p>透過這個遊戲，快速認識這項守護房產的好工具吧！</p>
+      <p><strong>雙重守護，房產更安心！</strong></p>
+      <p><strong>① 稅籍異動即時通</strong><br>
+      當名下不動產發生<strong>土地增值稅或契稅</strong>申報時，系統會以簡訊、電子郵件或官方 LINE 推播通知您。申請後需完成電子郵件驗證才正式生效。可臨櫃或透過「地方稅網路申報作業」線上申請。</p>
+      <p><strong>② 地籍異動即時通</strong><br>
+      由內政部地政司提供。當名下已登記不動產發生買賣、贈與、抵押權設定、查封、書狀補給等重要登記案件時，於「收件」及「異動完成」時，系統會以簡訊或電子郵件通知您。可臨櫃至任一地政事務所，或透過<strong>內政部數位櫃臺</strong>線上申請。</p>
+      <p>兩項服務皆為<strong>免費通知提醒</strong>，並不能直接阻止交易，但能讓您及早掌握異動資訊、及時主張權益。</p>
+      <p>建議兩者都申請，雙重守護房產權益！</p>
       <button class="close-btn" onclick="closeModal('knowledgeModal')">關閉</button>
     </div>
   </div>
 
   <script>
-    // ===== Game Data =====
     const questions = [
       {
         level: "第一關：認識服務功能",
@@ -748,14 +734,12 @@
       }
     ];
 
-    // ===== Game State =====
     let currentQ = 0;
     let score = 0;
     let answered = false;
     let selectedMulti = [];
     let correctCount = 0;
 
-    // ===== Functions =====
     function showScreen(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
@@ -817,7 +801,6 @@
         list.appendChild(li);
       });
 
-      // Reset feedback
       document.getElementById('feedbackArea').classList.remove('show', 'correct', 'wrong');
       document.getElementById('nextBtn').classList.remove('show');
       updateProgress();
@@ -833,7 +816,6 @@
         selectedMulti.push(key);
         li.classList.add('selected');
       }
-      // Enable confirm if at least one selected
       const confirmBtn = document.getElementById('confirmBtn');
       if (selectedMulti.length > 0) {
         confirmBtn.disabled = false;
@@ -861,7 +843,6 @@
       const q = questions[currentQ];
       const isCorrect = arraysEqual(userAnswers.sort(), q.correct.slice().sort());
 
-      // Disable all options
       document.querySelectorAll('.option-item').forEach(item => {
         item.classList.add('disabled');
         const key = item.dataset.key;
@@ -872,10 +853,8 @@
         }
       });
 
-      // Hide confirm for multi
       document.getElementById('confirmBtn').style.display = 'none';
 
-      // Feedback
       const feedback = document.getElementById('feedbackArea');
       const title = document.getElementById('feedbackTitle');
       const scoreEl = document.getElementById('feedbackScore');
@@ -901,7 +880,6 @@
       document.getElementById('currentScore').textContent = score;
       document.getElementById('nextBtn').classList.add('show');
 
-      // Update progress bar to reflect completion of this question
       const pct = ((currentQ + 1) / 5) * 100;
       document.getElementById('progressBar').style.width = pct + '%';
     }
@@ -980,7 +958,6 @@
       document.getElementById(id).classList.remove('show');
     }
 
-    // Close modal on overlay click
     document.querySelectorAll('.modal-overlay').forEach(modal => {
       modal.addEventListener('click', function(e) {
         if (e.target === this) {
